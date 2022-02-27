@@ -35,6 +35,7 @@ function createAccountsReport(accounts) {
 
   console.log(output);
 
+  fs.mkdirSync("reports", { recursive: true });
   fs.writeFileSync(`reports/report_${now()}.csv`, output);
 }
 
