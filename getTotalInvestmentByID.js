@@ -4,6 +4,9 @@ const { getProfileAxiesListByID } = require("./api/getProfileAxiesList");
 const { retry } = require("./api/retry");
 const { consoleAccount } = require("./createReport");
 
+const MAX_AXIE_PRICE_THRESHOLD = 200;
+const AXIE_PRICE_AVERAGE = 50;
+
 async function getAxiePrice(axie) {
   const result = await retry(
     () => getAxiesPriceList(axie),
@@ -11,12 +14,18 @@ async function getAxiePrice(axie) {
   );
 
   if (result?.length > 0) {
-    return Math.round(
+    const axiePrice = Math.round(
       result?.reduce((prev, cur) => prev + cur / result.length, 0)
     );
+
+    if (axiePrice > MAX_AXIE_PRICE_THRESHOLD) {
+      return AXIE_PRICE_AVERAGE;
+    } else {
+      return axiePrice;
+    }
   }
 
-  return 0;
+  return AXIE_PRICE_AVERAGE;
 }
 
 async function getTotalInvestmentByID(id) {
